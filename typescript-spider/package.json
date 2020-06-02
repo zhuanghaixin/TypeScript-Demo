@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "superagent": "^5.2.2"
+    "cheerio": "^1.0.0-rc.3",
+    "superagent": "^5.2.2",
+    "typescript": "^3.9.3"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.18",
