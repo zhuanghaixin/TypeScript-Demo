@@ -5,16 +5,15 @@ count=123
 
 let countInference=123
 
-
-
 // const firstNumber=1;
 // const secondNumber=2;
 //
 // const total=firstNumber+secondNumber
 
 // @ts-ignore
-function getTotal(firstNumber:number,secondNumber:number){
-    return firstNumber+secondNumber
+function getTotal(firstNumber: number, secondNumber: number) {
+  return firstNumber + secondNumber;
 }
 
-const total=getTotal(1,2)
+const total = getTotal(1, 1);
+console.log(total);
