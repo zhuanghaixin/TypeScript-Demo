@@ -12,7 +12,7 @@ class Crowller{
     // private url = "http://www.dell-lee.com"
     private url = "http://www.thenewstep.cn/"
 
-    getCourseInfo(html:string){
+    getProductInfo(html:string){
         const $=cheerio.load(html)
         const courseItems=$('.product')
         console.log(courseItems.length)
@@ -27,23 +27,27 @@ class Crowller{
              productName,price
             })
         })
-        const result={
+        return {
             time:new Date().getTime(),
             data:productInfos
         }
-        console.log(result)
 
+    }
+    //每个函数只执行一个功能
+    async initSpiderProcess(){
+         const html= await  this.getRawHtml()
+        console.log(html)
+        const courseResult = this.getProductInfo(html)
     }
     async getRawHtml(){
         //因为返回值是Promise
         const result=await superagent.get(this.url)
-        console.log(result.text)
-        this.getCourseInfo(result.text)
+        return result.text
     }
     constructor(){
-        this.getRawHtml()
-        console.log('constructor')
+      this.initSpiderProcess()
     }
 }
 const croller = new Crowller()
+
 
