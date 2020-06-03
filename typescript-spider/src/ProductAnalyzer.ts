@@ -15,6 +15,14 @@ interface Content {
 }
 
 export default class ProductAnalyzer implements Analyzer{
+    //单例
+    private static instance:ProductAnalyzer
+    static getInstance(){
+         if(!ProductAnalyzer.instance){
+             ProductAnalyzer.instance = new ProductAnalyzer()
+         }
+         return ProductAnalyzer.instance
+    }
     //分析数据，存储数据
   private  getProductInfo(html: string) {
         const $ = cheerio.load(html)
@@ -38,7 +46,7 @@ export default class ProductAnalyzer implements Analyzer{
     }
 
     //将传的数据生成json文件
-    generateJsonContent(productInfo: ProductResult,filePath:string) {
+    private generateJsonContent(productInfo: ProductResult,filePath:string) {
         console.log(444444)
         console.log(productInfo)
 
@@ -64,6 +72,9 @@ export default class ProductAnalyzer implements Analyzer{
         //生成json
         const fileContent = this.generateJsonContent(productInfo,filePath)
         return JSON.stringify(fileContent)
+    }
+    //单例模式
+    private constructor(){
 
     }
 }

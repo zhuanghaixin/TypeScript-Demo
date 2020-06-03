@@ -1,8 +1,8 @@
 import superagent from 'superagent'
 import fs from 'fs'
 import path from 'path'
-// import ProductAnalyzer from './ProductAnalyzer'
-import AnotherProductAnalyzer from './AnotherProductAnalyzer'
+import ProductAnalyzer from './ProductAnalyzer'
+// import AnotherProductAnalyzer from './AnotherProductAnalyzer'
 
 export interface Analyzer {
     analyze: (html: string, filePath: string) => string
@@ -46,22 +46,22 @@ class Crowller {
     //     console.log('constructor')
     // }
     //爬取html
-    async getRawHtml() {
+    private async getRawHtml() {
         //因为返回值是Promise
         const result = await superagent.get(this.url)
         return result.text
     }
-    writeFile(content: string) {
+    private writeFile(content: string) {
         fs.writeFileSync(this.filePath, content)
     }
     //每个函数只执行一个功能
-    async initSpiderProcess() {
+    private async initSpiderProcess() {
         //爬取html
         const html = await this.getRawHtml()
         console.log(html)
 
         //存储数据 生成json  最后返回一个字符串
-        const fileContent = this.analyzer.analyze(html,this.url)
+        const fileContent = this.analyzer.analyze(html,this.filePath)
 
 
         //写文件
@@ -73,8 +73,10 @@ class Crowller {
     }
 }
 // const analyzer = new ProductAnalyzer()
-const analyzer = new AnotherProductAnalyzer()
+// const analyzer = new ProductAnalyzer()
+const analyzer=ProductAnalyzer.getInstance()
 const url = "http://www.thenewstep.cn/"
- new Crowller(url, analyzer)
+new Crowller(url, analyzer)
+
 
 
