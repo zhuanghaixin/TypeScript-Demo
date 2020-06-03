@@ -1,17 +1,9 @@
 import superagent from 'superagent'
-import cheerio from 'cheerio'
 import fs from 'fs'
 import path from 'path'
+import ProductAnalyzer from './ProductAnalyzer'
 
-interface Product {
-    productName: string,
-    price: number
-}
 
-interface ProductResult {
-    time: number,
-    data: Product[]
-}
 
 // //json结构
 // {
@@ -33,10 +25,6 @@ interface ProductResult {
 // ],
 // }
 
-interface Content {
-    [propName: number]: Product[]
-}
-
 
 class Crowller {
     // private secret='secretKey'
@@ -46,26 +34,8 @@ class Crowller {
     // private url = "http://www.dell-lee.com"
     private url = "http://www.thenewstep.cn/"
     private  filePath = path.resolve(__dirname, '../data/product.json')
-    getProductInfo(html: string) {
-        const $ = cheerio.load(html)
-        const courseItems = $('.product')
-        console.log(courseItems.length)
-        const productInfos: Product[] = []
-        courseItems.map((index, element) => {
-            const elementProductName = $(element).find('.product-name')
-            const productName = elementProductName.text()
-            const elementPrice = $(element).find('.product-price')
-            const price = parseInt(elementPrice.text())
-            console.log(productName, price)
-            productInfos.push({
-                productName, price
-            })
-        })
-        return {
-            time: new Date().getTime(),
-            data: productInfos
-        }
-    }
+
+
 
 // async getRawHtml(){
 //     //因为返回值是Promise
@@ -77,34 +47,13 @@ class Crowller {
 //     this.getRawHtml()
 //     console.log('constructor')
 // }
-
+    //爬取html
     async getRawHtml() {
         //因为返回值是Promise
         const result = await superagent.get(this.url)
         return result.text
     }
 
-    //将传的数据生成json文件
-    generateJsonContent(productInfo: ProductResult) {
-        console.log(444444)
-        console.log(productInfo)
-
-        console.log(this.filePath)
-        //如果文件存在，则读出来，如果文件不存在，则创建文件的初始内容
-        let fileContent: Content = {}
-        console.log("fs.existsSync(filePath)")
-        console.log(fs.existsSync(this.filePath))
-        if (fs.existsSync(this.filePath)) {
-            //读取内容s
-            console.log(111111)
-            fileContent = JSON.parse(fs.readFileSync(this.filePath, 'utf-8'))
-        }
-        console.log(111)
-        fileContent[productInfo.time] = productInfo.data
-        console.log(22222)
-
-        return fileContent
-    }
 
     writeFile(content:string){
         fs.writeFileSync(this.filePath, content)
@@ -115,21 +64,21 @@ class Crowller {
         const html = await this.getRawHtml()
         console.log(html)
 
-        //存储数据
-        const productInfo = this.getProductInfo(html)
-        console.log(productInfo)
-        //生成json
-        const fileContent = this.generateJsonContent(productInfo)
+        //存储数据 生成json  最后返回一个字符串
+        const fileContent=this.analyzer.analyze(html,this.filePath)
+
+
+
         //写文件
-        this.writeFile(JSON.stringify(fileContent))
+        this.writeFile(fileContent)
 
     }
 
-    constructor() {
+    constructor(private analyzer:any) {
         this.initSpiderProcess()
     }
 }
-
-const croller = new Crowller()
+const analyzer=new ProductAnalyzer()
+const croller = new Crowller(analyzer)
 
 
