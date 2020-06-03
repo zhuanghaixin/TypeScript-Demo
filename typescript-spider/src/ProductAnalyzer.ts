@@ -1,6 +1,6 @@
 import cheerio from "cheerio";
 import fs from "fs";
-
+import {Analyzer} from './crowller'
 interface Product {
     productName: string,
     price: number
@@ -14,7 +14,7 @@ interface Content {
     [propName: number]: Product[]
 }
 
-export default class ProductAnalyzer{
+export default class ProductAnalyzer implements Analyzer{
     //分析数据，存储数据
   private  getProductInfo(html: string) {
         const $ = cheerio.load(html)
